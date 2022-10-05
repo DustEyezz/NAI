@@ -1,11 +1,9 @@
-#include <any>
 #include <functional>
 #include <iostream>
 #include <map>
 #include <string>
 #include <vector>
 #include <cmath>
-using mymap_t = std::map<double, double>;
 using myfunction_t = std::function<double(std::vector<double>)>;
 void calc(std::vector<double> numbers, myfunction_t fun) {
     using namespace std;
