@@ -17,13 +17,7 @@ int main(int argc, char **argv) {
     formaters["sin"] = [](vector<double> numbers) { return sin(numbers.front());};
     try {
         vector<string> arguments(argv, argv + argc);
-        //for (auto argument : arguments) cout << " " << argument;
-        if (arguments.at(1) != "lab1"){
-            cout << "Blad, brakuje lab1";
-            return 1;
-        }
         auto selected_f = arguments.at(2);
-        vector<double> numbers = {{stod(arguments.at(3)), stod(arguments.back())}};
         if (arguments.size() > 5){
             cout << "Blad. Zbyt duzo argumentow: " << arguments.size() - 1;
             return 1;
@@ -32,6 +26,11 @@ int main(int argc, char **argv) {
             cout << "Blad. Zbyt duzo argumentow przy wyborze sin, max to 1 argument ";
             return 1;
         }
+        else if (arguments.at(1) != "lab1"){
+            cout << "Blad, brakuje lab1 na poczatku";
+            return 1;
+        }
+        vector<double> numbers = {{stod(arguments.at(3)), stod(arguments.back())}};
         calc(numbers, formaters.at(selected_f));
     } catch (std::out_of_range aor) {
         cout << "Blad. Podaj poprawny argument. Dostepne to: ";
