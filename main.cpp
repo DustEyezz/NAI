@@ -16,14 +16,19 @@ void calc(mymap_t map1, myfunction_t fun) {
 }
 int main(int argc, char **argv) {
     using namespace std;
-    map<double, double> map1 = {{1, 2}};
+    //map<double, double> map1 = {{1, 2}};
     map<string, myfunction_t> formaters;
     formaters["mod"] = [](double x, double y) { return (int)x % (int)y;};
     formaters["add"] = [](double x, double y) { return  x+y; };
     formaters["sin"] = [](double x, double y) { return sin(x+y); };
     try {
         vector<string> arguments(argv, argv + argc);
-        auto selected_f = arguments.at(1);
+        //for (auto argument : arguments) cout << " " << argument;
+        if (arguments.at(1) != "lab1"){
+            cout << "Blad, brakuje lab1";
+        }
+        auto selected_f = arguments.at(2);
+        map<double, double> map1 = {{stof(arguments.at(3)), stof(arguments.at(4))}};
         calc(map1, formaters.at(selected_f));
     } catch (std::out_of_range aor) {
         cout << "Podaj argument. Dostepne to: ";
