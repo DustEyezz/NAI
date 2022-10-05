@@ -11,7 +11,6 @@ void calc(std::vector<double> numbers, myfunction_t fun) {
 }
 int main(int argc, char **argv) {
     using namespace std;
-    //map<double, double> map1 = {{1, 2}};
     map<string, myfunction_t> formaters;
     formaters["mod"] = [](vector<double> numbers) { return (int)numbers.front() % (int)numbers.back();};
     formaters["add"] = [](vector<double> numbers) { return  numbers.front() + numbers.back();};
