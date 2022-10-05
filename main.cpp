@@ -4,29 +4,32 @@
 #include <map>
 #include <string>
 #include <vector>
-using mojamapa_t = std::map<std::string, std::string>;
-using mojafunkcja_t = std::function<std::string(std::string)>;
-void wypisz(mojamapa_t mapa, mojafunkcja_t fun) {
+#include <cmath>
+using mymap_t = std::map<double, double>;
+using myfunction_t = std::function<double(double, double)>;
+void calc(mymap_t map1, myfunction_t fun) {
     using namespace std;
-    for (auto kv : mapa) {
+    for (auto kv : map1) {
         auto [k, v] = kv;
-        cout << "klucz: " << k << "; wartosc " << fun(v) << endl;
+        cout << fun(k, v) << endl;
     }
 }
 int main(int argc, char **argv) {
     using namespace std;
-    map<string, string> mapa = {{"imie", "Jan"}};
-    map<string, mojafunkcja_t> formatery;
-    formatery["r"] = [](string x) { return "== " + x + " =="; };
-    formatery["p"] = [](string x) { return "__" + x + "__"; };
+    map<double, double> map1 = {{1, 2}};
+    map<string, myfunction_t> formaters;
+    formaters["mod"] = [](double x, double y) { return (int)x % (int)y;};
+    formaters["add"] = [](double x, double y) { return  x+y; };
+    formaters["sin"] = [](double x, double y) { return sin(x+y); };
     try {
-        vector<string> argumenty(argv, argv + argc);
-        auto selected_f = argumenty.at(1);
-        wypisz(mapa, formatery.at(selected_f));
+        vector<string> arguments(argv, argv + argc);
+        auto selected_f = arguments.at(1);
+        calc(map1, formaters.at(selected_f));
     } catch (std::out_of_range aor) {
-        cout << "podaj argument. Dostępne to: ";
-        for (auto [k, v] : formatery) cout << " " << k;
+        cout << "Podaj argument. Dostepne to: ";
+        for (auto [k, v] : formaters) cout << " " << k;
         cout << endl;
+        return 1;
     }
     return 0;
 }
