@@ -1,42 +1,57 @@
-#include <functional>
 #include <iostream>
-#include <map>
-#include <string>
 #include <vector>
-#include <cmath>
-using myfunction_t = std::function<double(std::vector<double>)>;
-void calc(std::vector<double> numbers, myfunction_t fun) {
-    using namespace std;
-    cout << fun(numbers) << endl;
-}
-int main(int argc, char **argv) {
-    using namespace std;
-    map<string, myfunction_t> formaters;
-    formaters["mod"] = [](vector<double> numbers) { return (int)numbers.front() % (int)numbers.back();};
-    formaters["add"] = [](vector<double> numbers) { return  numbers.front() + numbers.back();};
-    formaters["sin"] = [](vector<double> numbers) { return sin(numbers.front());};
+#include <functional>
+#include <random>
+/**
+ * domain - generate domain points. Throws exception when all the points were returned
+ */
+auto brute_force = [](auto f, auto domain) {
+    auto current_p = domain();
+    auto best_point = current_p;
     try {
-        vector<string> arguments(argv, argv + argc);
-        auto selected_f = arguments.at(2);
-        if (arguments.size() > 5){
-            cout << "Blad. Zbyt duzo argumentow: " << arguments.size() - 1;
-            return 1;
+        while (true) {
+            if (f(current_p) < f(best_point)) {
+                best_point = current_p;
+            }
+            current_p = domain();
         }
-        else if(selected_f == "sin" && arguments.size() > 4){
-            cout << "Blad. Zbyt duzo argumentow przy wyborze sin, max to 1 argument ";
-            return 1;
-        }
-        else if (arguments.at(1) != "lab1"){
-            cout << "Blad, brakuje lab1 na poczatku";
-            return 1;
-        }
-        vector<double> numbers = {{stod(arguments.at(3)), stod(arguments.back())}};
-        calc(numbers, formaters.at(selected_f));
-    } catch (std::out_of_range aor) {
-        cout << "Blad. Podaj poprawny argument. Dostepne to: ";
-        for (auto [k, v] : formaters) cout << " " << k;
-        cout << endl;
-        return 1;
+    } catch (std::exception &e) {
     }
+    return best_point;
+};
+using domain_t = std::vector<double>;
+std::random_device rd;
+std::mt19937 mt_generator(rd());
+domain_t hill_climbing(const std::function<double(domain_t)> &f, domain_t minimal_d, domain_t maximal_d, int max_iterations) {
+    domain_t current_p(minimal_d.size());
+    for (int i = 0; i < minimal_d.size(); i++) {
+        std::uniform_real_distribution<double> dist(minimal_d[i], maximal_d[i]);
+        current_p[i] = dist(mt_generator);
+    }
+    for (int iteration = 0; iteration < max_iterations; iteration++) {
+        domain_t new_p(minimal_d.size());
+        for (int i = 0; i < minimal_d.size(); i++) {
+            std::uniform_real_distribution<double> dist(-1.0/128.0, 1.0/128.0);
+            new_p[i] = current_p[i] + dist(mt_generator);
+        }
+        if (f(current_p) > f(new_p)) {
+            current_p = new_p;
+        }
+    }
+    return current_p;
+}
+int main() {
+    auto sphere_f = [](double x) {return x*x;};
+    double current_sphere_x = -10;
+    auto sphere_generator = [&]() {
+        current_sphere_x+= 1.0/128.0;
+        if (current_sphere_x >= 10) throw std::invalid_argument("finished");
+        return current_sphere_x;
+    };
+    auto best_point = brute_force(sphere_f, sphere_generator);
+    std::cout << "best x = " << best_point << std::endl;
+    auto sphere_f_v = [](domain_t x) {return x[0]*x[0];};
+    auto best2 = hill_climbing(sphere_f_v, {-10},{10},10000);
+    std::cout << "best x = " << best2[0] << std::endl;
     return 0;
 }
