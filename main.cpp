@@ -43,6 +43,8 @@ double optimize(auto function, auto domain, int maxIterations=1000){
 
 int main(){
 
+    vector<string> arguments(argv, argv + argc);
+    auto selected_f = arguments.at(2);
     map<string, myfunction_t> myFunctions;
     myFunctions["beal"] = [](double x, double y) { return (pow((1.5 - x + (x * y)),2)) + (pow(2.25 - x + (x * pow(y,2)),2))+(pow(2.625 - x + x * pow(y,3),2));};
 
