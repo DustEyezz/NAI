@@ -5,8 +5,15 @@
 #include <time.h>
 using namespace std;
 using domain_t = std::vector<double>;
+using myfunction_t = std::function<double(std::vector<double>)>;
 std::random_device rd;
 std::mt19937 mt_generator(rd());
+
+
+void calc(std::vector<double> numbers, myfunction_t fun) {
+    using namespace std;
+    cout << fun(numbers) << endl;
+}
 
 double optimize(auto function, auto domain, int maxIterations=1000){
     clock_t startClock, endClock;
@@ -33,6 +40,9 @@ double optimize(auto function, auto domain, int maxIterations=1000){
 }
 
 int main(){
+
+    map<string, myfunction_t> myFunctions;
+    myFunctions["beal"] = [](double x, double y) { return (pow((1.5 - x + (x * y)),2)) + (pow(2.25 - x + (x * pow(y,2)),2))+(pow(2.625 - x + x * pow(y,3),2));};
 
     //map<string, function <double (double x, double y)>> functionMap;
 
