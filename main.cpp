@@ -38,7 +38,6 @@ double optimize(myfunction_t function, vector<double> domain, int maxIterations=
 
 int main(int argc, char **argv){
 
-
     map<string, myfunction_t> myFunctions;
     map<string, vector<double>> domain;
 
