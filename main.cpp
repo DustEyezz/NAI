@@ -6,7 +6,6 @@
 #include <time.h>
 
 using namespace std;
-using domain_t = std::vector<double>;
 using myfunction_t = std::function<double(double, double)>;
 std::random_device rd;
 std::mt19937 mt_generator(rd());
