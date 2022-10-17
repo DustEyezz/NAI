@@ -17,7 +17,7 @@ std::mt19937 mt_generator(rd());
     //cout << fun(numbers) << endl;
 //}
 
-double optimize(auto function, auto domain, int maxIterations=1000){
+double optimize(myfunction_t function, vector<double> domain, int maxIterations=10000){
     clock_t startClock, endClock;
     startClock = clock();
     double time;
@@ -41,35 +41,34 @@ double optimize(auto function, auto domain, int maxIterations=1000){
     return currentBest;
 }
 
-int main(){
+int main(int argc, char **argv){
 
     vector<string> arguments(argv, argv + argc);
-    auto selected_f = arguments.at(2);
+    auto selectedFunction = arguments.at(1);
     map<string, myfunction_t> myFunctions;
-    myFunctions["beal"] = [](double x, double y) { return (pow((1.5 - x + (x * y)),2)) + (pow(2.25 - x + (x * pow(y,2)),2))+(pow(2.625 - x + x * pow(y,3),2));};
 
-    //map<string, function <double (double x, double y)>> functionMap;
-
-    auto beal = [](double x, double y) {
+    myFunctions["beale"] = [](double x, double y) {
         return (pow((1.5 - x + (x * y)),2)) + (pow(2.25 - x + (x * pow(y,2)),2))+(pow(2.625 - x + x * pow(y,3),2));
     };
-
-    auto himmel = [](double x, double y) {
+    myFunctions["himmel"] = [](double x, double y) {
         return pow(pow(x,2) + y - 11,2) + pow(x + pow(y,2) - 7,2);
     };
-
-    auto threeHumpCamel = [](double x, double y) {
+    myFunctions["threeHumpCamel"] = [](double x, double y) {
         return ((2 * pow(x,2)) - (1.05 * pow(x,4)) + ((pow(x,6))/6) + (x*y) + (pow(y,2)));
     };
-
-    auto matyas = [](double x, double y) {
+    myFunctions["matyas"] = [](double x, double y) {
         return (0.26 * (pow(x, 2) + pow(y, 2)) - (0.48 * x * y));
     };
 
-    vector<double> domain = {-10,10};
+   map<string, vector<double>> domain;
+
+   domain["beale"] = {-4.5,4.5};
+   domain["himmel"] = {-5,5};
+   domain["threeHumpCamel"] = {-5,5};
+   domain["matyas"] = {-10,10};
 
     for(int i = 0; i < 10; i++){
-        cout<<optimize(matyas,domain,10000)<<endl;
+        cout<<optimize(myFunctions.at(selectedFunction),domain.at(selectedFunction),10000)<<endl;
     }
     return 0;
 }
