@@ -12,11 +12,6 @@ std::random_device rd;
 std::mt19937 mt_generator(rd());
 
 
-//void calc(std::vector<double> numbers, myfunction_t fun) {
-  //  using namespace std;
-    //cout << fun(numbers) << endl;
-//}
-
 double optimize(myfunction_t function, vector<double> domain, int maxIterations=10000){
     clock_t startClock, endClock;
     startClock = clock();
@@ -43,9 +38,9 @@ double optimize(myfunction_t function, vector<double> domain, int maxIterations=
 
 int main(int argc, char **argv){
 
-    vector<string> arguments(argv, argv + argc);
-    auto selectedFunction = arguments.at(1);
+
     map<string, myfunction_t> myFunctions;
+    map<string, vector<double>> domain;
 
     myFunctions["beale"] = [](double x, double y) {
         return (pow((1.5 - x + (x * y)),2)) + (pow(2.25 - x + (x * pow(y,2)),2))+(pow(2.625 - x + x * pow(y,3),2));
@@ -60,15 +55,23 @@ int main(int argc, char **argv){
         return (0.26 * (pow(x, 2) + pow(y, 2)) - (0.48 * x * y));
     };
 
-   map<string, vector<double>> domain;
-
    domain["beale"] = {-4.5,4.5};
    domain["himmel"] = {-5,5};
    domain["threeHumpCamel"] = {-5,5};
    domain["matyas"] = {-10,10};
 
-    for(int i = 0; i < 10; i++){
-        cout<<optimize(myFunctions.at(selectedFunction),domain.at(selectedFunction),10000)<<endl;
-    }
+   try {
+       vector<string> arguments(argv, argv + argc);
+       auto selectedFunction = arguments.at(1);
+       for(int i = 0; i < 10; i++){
+           cout<<optimize(myFunctions.at(selectedFunction),domain.at(selectedFunction),10000)<<endl;
+       }
+   }
+   catch (std::out_of_range aor) {
+       cout << "Blad. Podaj poprawny argument. Dostepne to: ";
+       for (auto [k, v] : myFunctions) cout << k << ", ";
+       cout << endl;
+       return 1;
+   }
     return 0;
 }
