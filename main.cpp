@@ -18,7 +18,7 @@ double optimize(myfunction_t function, vector<double> domain, int maxIterations=
     uniform_real_distribution<double> dist(domain.at(0), domain.at(1));
     double currentBest = function(domain.at(0), domain.at(1));
 
-    for(int i = 0; i < maxIterations - 1; i++){
+    for(int i = 0; i < maxIterations; i++){
         double rand1 = dist(mt_generator);
         double rand2 = dist(mt_generator);
         double temp;
