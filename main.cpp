@@ -31,7 +31,7 @@ double optimize(myfunction_t function, vector<double> domain, int maxIterations=
 
     endClock = clock();
     time = ((double) (endClock - startClock)) / CLOCKS_PER_SEC;
-    cout<<"Iterations: "<<maxIterations<<" Time needed: "<<time<<" Result: ";
+    cout<<"Iterations: "<<maxIterations<<" Time taken: "<<time<<" Lowest: ";
     return currentBest;
 }
 
