@@ -1,19 +1,21 @@
 #include <iostream>
 #include <functional>
+#include <map>
 #include <math.h>
 #include <random>
 #include <time.h>
+
 using namespace std;
 using domain_t = std::vector<double>;
-using myfunction_t = std::function<double(std::vector<double>)>;
+using myfunction_t = std::function<double(double, double)>;
 std::random_device rd;
 std::mt19937 mt_generator(rd());
 
 
-void calc(std::vector<double> numbers, myfunction_t fun) {
-    using namespace std;
-    cout << fun(numbers) << endl;
-}
+//void calc(std::vector<double> numbers, myfunction_t fun) {
+  //  using namespace std;
+    //cout << fun(numbers) << endl;
+//}
 
 double optimize(auto function, auto domain, int maxIterations=1000){
     clock_t startClock, endClock;
