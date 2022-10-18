@@ -3,7 +3,7 @@
 #include <map>
 #include <math.h>
 #include <random>
-#include <time.h>
+#include <chrono>
 
 using namespace std;
 using myfunction_t = std::function<double(double, double)>;
@@ -12,9 +12,7 @@ std::mt19937 mt_generator(rd());
 
 
 double optimize(myfunction_t function, vector<double> domain, int maxIterations=10000){
-    clock_t startClock, endClock;
-    startClock = clock();
-    double time;
+    auto start = std::chrono::high_resolution_clock::now();
     uniform_real_distribution<double> dist(domain.at(0), domain.at(1));
     double currentBest = function(domain.at(0), domain.at(1));
 
@@ -28,10 +26,9 @@ double optimize(myfunction_t function, vector<double> domain, int maxIterations=
             currentBest = temp;
         }
     }
-
-    endClock = clock();
-    time = ((double) (endClock - startClock)) / CLOCKS_PER_SEC;
-    cout<<"Iterations: "<<maxIterations<<" Time taken: "<<time<<" Lowest: ";
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    cout<<"Iterations: "<<maxIterations<<" Time taken: "<<duration.count()<<" microseconds Lowest: ";
     return currentBest;
 }
 
