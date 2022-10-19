@@ -1,3 +1,3 @@
-C:/Users/coolm/Documents/GitHub/NAI/cmake-build-debug/CMakeFiles/NAI.dir
-C:/Users/coolm/Documents/GitHub/NAI/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/coolm/Documents/GitHub/NAI/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+C:/Users/s23316/Documents/GitHub/NAI/cmake-build-debug/CMakeFiles/NAI.dir
+C:/Users/s23316/Documents/GitHub/NAI/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/s23316/Documents/GitHub/NAI/cmake-build-debug/CMakeFiles/rebuild_cache.dir

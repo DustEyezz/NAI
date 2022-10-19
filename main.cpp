@@ -11,15 +11,17 @@ std::random_device rd;
 std::mt19937 mt_generator(rd());
 
 
-double optimize(myfunction_t function, vector<double> domain, int maxIterations=10000){
+double optimize(myfunction_t function, vector<double> domain, int maxIterations=1000){
 
     FILE *fp = NULL;
     fp = fopen("data.txt", "a");
 
-    auto start = std::chrono::high_resolution_clock::now();
+    int checkpoint = maxIterations / 20;
+
     uniform_real_distribution<double> dist(domain.at(0), domain.at(1));
     double currentBest = function(domain.at(0), domain.at(1));
 
+    auto start = std::chrono::high_resolution_clock::now();
     for(int i = 0; i < maxIterations; i++){
         double rand1 = dist(mt_generator);
         double rand2 = dist(mt_generator);
@@ -29,11 +31,16 @@ double optimize(myfunction_t function, vector<double> domain, int maxIterations=
         if(temp < currentBest){
             currentBest = temp;
         }
+
+        if (i % checkpoint == 0){
+            auto stop = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+            fprintf(fp, "%d %f\n", (int)duration.count(), currentBest);
+        }
     }
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    fprintf(fp, "%f %f\n", (double)duration.count(), currentBest);
-    cout<<"Iterations: "<<maxIterations<<" Time taken: "<<duration.count()<<" microseconds Lowest: ";
+
+    fclose(fp);
+    //cout<<"Iterations: "<<maxIterations<<" Time taken: "<<duration.count()<<" microseconds Lowest: ";
     return currentBest;
 }
 
@@ -69,7 +76,7 @@ int main(int argc, char **argv){
    try {
        vector<string> arguments(argv, argv + argc);
        auto selectedFunction = arguments.at(1);
-       for(int i = 0; i < 20; i++){
+       for(int i = 0; i < 1; i++){
            cout<<optimize(myFunctions.at(selectedFunction),domain.at(selectedFunction),10000)<<endl;
        }
    }
