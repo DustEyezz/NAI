@@ -39,7 +39,7 @@ double optimize(myfunction_t function, vector<double> domain, int maxIterations=
 
 int main(int argc, char **argv){
     FILE *gnupipe = NULL;
-    char *gnuCommands [] = {"set title \"Optimization function graph\"", "f(x) = mean_y", "fit f(x) 'data.txt' via mean_y", "set xlabel\"time in microseconds\"", "set ylabel \"lowest generated\"", "plot 'data.txt', \ f(x)"};
+    char *gnuCommands [] = {"set title \"Optimization function graph\"", "f(x) = mean_y", "g(y) = mean_x", "fit f(x) 'data.txt' using 1:2 via mean_y", "fit g(x) 'data.txt' using 2:1 via mean_x", "set xlabel\"time in microseconds\"", "set ylabel \"lowest generated\"", "plot 'data.txt', \ f(x), \ g(x)"};
     gnupipe = _popen("gnuplot -persistent", "w");
 
     map<string, myfunction_t> myFunctions;
@@ -79,7 +79,7 @@ int main(int argc, char **argv){
        cout << endl;
        return 1;
    }
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 8; i++) {
         fprintf(gnupipe, "%s\n", gnuCommands[i]);
     }
    return 0;
