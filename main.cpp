@@ -29,33 +29,33 @@ double hillClimbing(myfunction_t function, vector<double> domain, int maxIterati
     double domainStart = domain.at(0);
     double domainEnd = domain.at(1);
 
-    pair<double,double> currXY = randomSingularXY(domain.at(0), domain.at(1));
+    pair<double,double> sk = randomSingularXY(domain.at(0), domain.at(1));
 
 
     auto start = std::chrono::high_resolution_clock::now();
 
     for(int i = 0; i < maxIterations; i++){
-        auto temperature = randomVectorXY(currXY, domain.at(0), domain.at(1));
+        auto tk = randomVectorXY(sk, domain.at(0), domain.at(1));
         auto bestNeighbour = *min_element(
-                temperature.begin(),
-                temperature.end(),
+                tk.begin(),
+                tk.end(),
                 [function](auto domainStart, auto domainEnd) {
                     return function(domainStart) > function(domainEnd);
                 }
         );
-        if (function(bestNeighbour) < function(currXY))
-            currXY = bestNeighbour;
+        if (function(bestNeighbour) < function(sk))
+            sk = bestNeighbour;
 
         if (i % checkpoint == 0){
             auto stop = std::chrono::high_resolution_clock::now();
-            double currentBest = function(currXY);
+            double currentBest = function(sk);
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
             fprintf(fp, "%d %f\n", (int)duration.count(), currentBest);
         }
     }
 
     fclose(fp);
-    return function(currXY);
+    return function(sk);
 }
 
 double simulatedAnnealing (myfunction_t function, vector<double> domain, int maxIterations=1000) {
@@ -66,35 +66,38 @@ double simulatedAnnealing (myfunction_t function, vector<double> domain, int max
 
     vector<pair<double, double>> ArrayOfXY;
     uniform_real_distribution<double> rand01(0, 1);
-    double rand01Val = rand01(mt_generator);
+    double uk = rand01(mt_generator);
 
-    auto currXY = randomSingularXY(domain.at(0), domain.at(1));
-    ArrayOfXY.push_back(currXY);
+    auto sk = randomSingularXY(domain.at(0), domain.at(1));
+    ArrayOfXY.push_back(sk);
+    auto prevSK = sk;
 
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < maxIterations; i++) {
-        auto temperature = randomSingularXY(domain.at(0), domain.at(1));
-        if (function(temperature) <= function(currXY)) {
-            currXY = temperature;
-            ArrayOfXY.push_back(currXY);
+        auto tk = randomSingularXY(domain.at(0), domain.at(1));
+        if (function(tk) <= function(sk)) {
+            sk = tk;
+            ArrayOfXY.push_back(sk);
         } else {
-            if (rand01Val < exp(-(abs(function(temperature) - function(currXY)) / (1 / log(i))))) {
-                currXY = temperature;
-                ArrayOfXY.push_back(currXY);
+            if (uk < exp(-(abs(function(tk) - function(prevSK))) / ((1 / log(i) / maxIterations)))) {
+                sk = tk;
+                ArrayOfXY.push_back(sk);
+            }
+            else{
+                sk = prevSK;
             }
         }
-
-
+        prevSK = sk;
 
         if (i % checkpoint == 0){
             auto stop = std::chrono::high_resolution_clock::now();
-            double currentBest = function(currXY);
+            double currentBest = function(sk);
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
             fprintf(fp, "%d %f\n", (int)duration.count(), currentBest);
         }
     }
     fclose(fp);
-    return function(currXY);
+    return function(sk);
 };
 
 int main(int argc, char **argv){
@@ -132,8 +135,8 @@ int main(int argc, char **argv){
        vector<string> arguments(argv, argv + argc);
        auto selectedFunction = arguments.at(1);
        for (int i = 0; i < 1; i++) {
-           cout << hillClimbing(myFunctions.at(selectedFunction), domain.at(selectedFunction), 1000000) << endl;
-           cout << simulatedAnnealing(myFunctions.at(selectedFunction), domain.at(selectedFunction), 1000000) << endl;
+           cout << hillClimbing(myFunctions.at(selectedFunction), domain.at(selectedFunction), 10000) << endl;
+           cout << simulatedAnnealing(myFunctions.at(selectedFunction), domain.at(selectedFunction), 10000) << endl;
        }
    }
    catch (std::out_of_range aor) {
