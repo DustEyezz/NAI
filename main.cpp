@@ -25,7 +25,7 @@ double hillClimbing(myfunction_t function, vector<double> domain, int maxIterati
     FILE *fp = NULL;
     fp = fopen("climbing.txt", "a");
 
-    int checkpoint = maxIterations / 20;
+    int checkpoint = maxIterations / 25;
     double domainStart = domain.at(0);
     double domainEnd = domain.at(1);
 
@@ -62,7 +62,7 @@ double simulatedAnnealing (myfunction_t function, vector<double> domain, int max
     FILE *fp = NULL;
     fp = fopen("annealing.txt", "a");
 
-    int checkpoint = maxIterations / 20;
+    int checkpoint = maxIterations / 25;
 
     vector<pair<double, double>> ArrayOfXY;
     uniform_real_distribution<double> rand01(0, 1);
@@ -79,7 +79,7 @@ double simulatedAnnealing (myfunction_t function, vector<double> domain, int max
             sk = tk;
             ArrayOfXY.push_back(sk);
         } else {
-            if (uk < exp(-(abs(function(tk) - function(prevSK))) / ((1 / log(i) / maxIterations)))) {
+            if (uk < exp(-(abs(function(tk) - function(prevSK))) / ((abs(domain.at(0)) + (abs(domain.at(1)))) / i / (maxIterations/10)))) {
                 sk = tk;
                 ArrayOfXY.push_back(sk);
             }
@@ -135,7 +135,9 @@ int main(int argc, char **argv){
        vector<string> arguments(argv, argv + argc);
        auto selectedFunction = arguments.at(1);
        for (int i = 0; i < 1; i++) {
+           cout << "HillClimbing: ";
            cout << hillClimbing(myFunctions.at(selectedFunction), domain.at(selectedFunction), 10000) << endl;
+           cout << "Simulated Annealing: ";
            cout << simulatedAnnealing(myFunctions.at(selectedFunction), domain.at(selectedFunction), 10000) << endl;
        }
    }
