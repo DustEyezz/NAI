@@ -10,6 +10,13 @@ using myfunction_t = std::function<double(pair<double, double>)>;
 std::random_device rd;
 std::mt19937 mt_generator(rd());
 
+double scale(double number, double oldMax, double oldMin, double newMin, double newMax)
+{
+    double OldRange = (oldMax - oldMin);
+    double NewRange = (newMax - newMin);
+    return (((number - oldMin) * NewRange) / OldRange) + newMin;
+}
+
 auto randomSingularXY = [](double a, double b) {
     uniform_real_distribution<> dis(a, b);
     return pair<double, double>(dis(mt_generator), dis(mt_generator));
@@ -100,13 +107,13 @@ double simulatedAnnealing (myfunction_t function, vector<double> domain, int max
     auto prevSK = sk;
 
     auto start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < maxIterations; i++) {
+    for (int i = 1; i < maxIterations - 1; i++) {
         auto tk = randomSingularXY(domain.at(0), domain.at(1));
         if (function(tk) <= function(sk)) {
             sk = tk;
             ArrayOfXY.push_back(sk);
         } else {
-            if (uk < exp(-(abs(function(tk) - function(prevSK))) / ((abs(domain.at(0)) + (abs(domain.at(1)))) / i / (maxIterations/10)))) {
+            if (uk < exp(-(abs(function(tk) - function(prevSK))) / (scale(i, maxIterations, 1, abs((domain.at(0)+domain.at(1)/2)), 0.0000001) / 1000))) {
                 sk = tk;
                 ArrayOfXY.push_back(sk);
             }
@@ -115,7 +122,8 @@ double simulatedAnnealing (myfunction_t function, vector<double> domain, int max
             }
         }
         prevSK = sk;
-
+        double temp = scale(i, maxIterations, 1, 5, 0.0001);
+        //cout << temp << endl;
         if (i % checkpoint == 0){
             auto stop = std::chrono::high_resolution_clock::now();
             double currentBest = function(sk);
@@ -165,11 +173,11 @@ int main(int argc, char **argv){
        auto selectedFunction = arguments.at(1);
        for (int i = 0; i < 1; i++) {
            cout << "BruteForce: ";
-           cout << bruteForce(myFunctions.at(selectedFunction), domain.at(selectedFunction), 10000) << endl;
+           cout << bruteForce(myFunctions.at(selectedFunction), domain.at(selectedFunction), 100000) << endl;
            cout << "HillClimbing: ";
-           cout << hillClimbing(myFunctions.at(selectedFunction), domain.at(selectedFunction), 10000) << endl;
+           cout << hillClimbing(myFunctions.at(selectedFunction), domain.at(selectedFunction), 100000) << endl;
            cout << "Simulated Annealing: ";
-           cout << simulatedAnnealing(myFunctions.at(selectedFunction), domain.at(selectedFunction), 10000) << endl;
+           cout << simulatedAnnealing(myFunctions.at(selectedFunction), domain.at(selectedFunction), 100000) << endl;
        }
    }
    catch (std::out_of_range aor) {
