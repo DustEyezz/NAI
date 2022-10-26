@@ -48,10 +48,11 @@ double bruteForce (myfunction_t function, vector<double> domain, int maxIteratio
             auto stop = std::chrono::high_resolution_clock::now();
             double currentBest = function(bestPair);
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-            fprintf(fp, "%d %f\n", (int)duration.count(), currentBest);
+            //fprintf(fp, "%d %f\n", (int)duration.count(), currentBest);
         }
     }
 
+    fprintf(fp,"%f\n", function(bestPair));
     fclose(fp);
     return function(bestPair);
 };
@@ -69,10 +70,10 @@ double hillClimbing(myfunction_t function, vector<double> domain, int maxIterati
     auto start = std::chrono::high_resolution_clock::now();
 
     for(int i = 0; i < maxIterations; i++){
-        auto tk = randomVectorXY(sk, domain.at(0), domain.at(1));
+        auto temp = randomVectorXY(sk, domain.at(0), domain.at(1));
         auto bestNeighbour = *min_element(
-                tk.begin(),
-                tk.end(),
+                temp.begin(),
+                temp.end(),
                 [function](auto domainStart, auto domainEnd) {
                     return function(domainStart) > function(domainEnd);
                 }
@@ -84,10 +85,10 @@ double hillClimbing(myfunction_t function, vector<double> domain, int maxIterati
             auto stop = std::chrono::high_resolution_clock::now();
             double currentBest = function(sk);
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-            fprintf(fp, "%d %f\n", (int)duration.count(), currentBest);
+            //fprintf(fp, "%d %f\n", (int)duration.count(), currentBest);
         }
     }
-
+    fprintf(fp,"%f\n", function(sk));
     fclose(fp);
     return function(sk);
 }
@@ -128,9 +129,10 @@ double simulatedAnnealing (myfunction_t function, vector<double> domain, int max
             auto stop = std::chrono::high_resolution_clock::now();
             double currentBest = function(sk);
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-            fprintf(fp, "%d %f\n", (int)duration.count(), currentBest);
+            //fprintf(fp, "%d %f\n", (int)duration.count(), currentBest);
         }
     }
+    fprintf(fp,"%f\n", function(sk));
     fclose(fp);
     return function(sk);
 };
@@ -171,13 +173,13 @@ int main(int argc, char **argv){
    try {
        vector<string> arguments(argv, argv + argc);
        auto selectedFunction = arguments.at(1);
-       for (int i = 0; i < 1; i++) {
+       for (int i = 0; i < 25; i++) {
            cout << "BruteForce: ";
-           cout << bruteForce(myFunctions.at(selectedFunction), domain.at(selectedFunction), 100000) << endl;
+           cout << bruteForce(myFunctions.at(selectedFunction), domain.at(selectedFunction), 10000) << endl;
            cout << "HillClimbing: ";
-           cout << hillClimbing(myFunctions.at(selectedFunction), domain.at(selectedFunction), 100000) << endl;
+           cout << hillClimbing(myFunctions.at(selectedFunction), domain.at(selectedFunction), 10000) << endl;
            cout << "Simulated Annealing: ";
-           cout << simulatedAnnealing(myFunctions.at(selectedFunction), domain.at(selectedFunction), 100000) << endl;
+           cout << simulatedAnnealing(myFunctions.at(selectedFunction), domain.at(selectedFunction), 10000) << endl;
        }
    }
    catch (std::out_of_range aor) {
