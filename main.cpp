@@ -20,14 +20,41 @@ auto randomVectorXY = [](pair<double, double> p, int a, int b) -> vector<pair<do
     return {pair<double, double>(dis(mt_generator), dis(mt_generator))};
 };
 
+double bruteForce (myfunction_t function, vector<double> domain, int maxIterations=1000) {
+
+    FILE *fp = NULL;
+    fp = fopen("bruteforce.txt", "a");
+
+    int checkpoint = maxIterations / 25;
+
+    auto currentPair = randomSingularXY(domain.at(0), domain.at(1));
+    auto bestPair = currentPair;
+    auto start = std::chrono::high_resolution_clock::now();
+
+    for (int i = 0; i < maxIterations; ++i) {
+        if (function(currentPair) < function(bestPair)) {
+            bestPair = currentPair;
+        }
+        currentPair = randomSingularXY(domain.at(0), domain.at(1));
+
+        if (i % checkpoint == 0){
+            auto stop = std::chrono::high_resolution_clock::now();
+            double currentBest = function(bestPair);
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+            fprintf(fp, "%d %f\n", (int)duration.count(), currentBest);
+        }
+    }
+
+    fclose(fp);
+    return function(bestPair);
+};
+
 double hillClimbing(myfunction_t function, vector<double> domain, int maxIterations=1000){
 
     FILE *fp = NULL;
     fp = fopen("climbing.txt", "a");
 
     int checkpoint = maxIterations / 25;
-    double domainStart = domain.at(0);
-    double domainEnd = domain.at(1);
 
     pair<double,double> sk = randomSingularXY(domain.at(0), domain.at(1));
 
@@ -130,11 +157,15 @@ int main(int argc, char **argv){
        cout << "Creating file\n";
    if( remove( "annealing.txt" ) != 0 )
        cout << "Creating file\n";
+   if( remove( "bruteforce.txt" ) != 0 )
+       cout << "Creating file\n";
 
    try {
        vector<string> arguments(argv, argv + argc);
        auto selectedFunction = arguments.at(1);
        for (int i = 0; i < 1; i++) {
+           cout << "BruteForce: ";
+           cout << bruteForce(myFunctions.at(selectedFunction), domain.at(selectedFunction), 10000) << endl;
            cout << "HillClimbing: ";
            cout << hillClimbing(myFunctions.at(selectedFunction), domain.at(selectedFunction), 10000) << endl;
            cout << "Simulated Annealing: ";
