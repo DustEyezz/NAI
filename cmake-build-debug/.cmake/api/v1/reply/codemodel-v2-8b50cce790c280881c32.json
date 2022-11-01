@@ -49,12 +49,12 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "C:/Users/s23316/Documents/GitHub/NAI/cmake-build-debug",
-		"source" : "C:/Users/s23316/Documents/GitHub/NAI"
+		"build" : "C:/Users/coolm/Documents/GitHub/NAI/cmake-build-debug",
+		"source" : "C:/Users/coolm/Documents/GitHub/NAI"
 	},
 	"version" : 
 	{
 		"major" : 2,
-		"minor" : 4
+		"minor" : 3
 	}
 }

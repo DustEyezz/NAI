@@ -10,132 +10,46 @@ using myfunction_t = std::function<double(pair<double, double>)>;
 std::random_device rd;
 std::mt19937 mt_generator(rd());
 
-double scale(double number, double oldMax, double oldMin, double newMin, double newMax)
-{
-    double OldRange = (oldMax - oldMin);
-    double NewRange = (newMax - newMin);
-    return (((number - oldMin) * NewRange) / OldRange) + newMin;
-}
-
-auto randomSingularXY = [](double a, double b) {
-    uniform_real_distribution<> dis(a, b);
-    return pair<double, double>(dis(mt_generator), dis(mt_generator));
-};
-
-auto randomVectorXY = [](pair<double, double> p, int a, int b) -> vector<pair<double, double>> {
-    uniform_real_distribution<> dis(a, b);
-    return {pair<double, double>(dis(mt_generator), dis(mt_generator))};
-};
-
-double bruteForce (myfunction_t function, vector<double> domain, int maxIterations=1000) {
-
-    FILE *fp = NULL;
-    fp = fopen("bruteforce.txt", "a");
-
-    int checkpoint = maxIterations / 25;
-
-    auto currentPair = randomSingularXY(domain.at(0), domain.at(1));
-    auto bestPair = currentPair;
-    auto start = std::chrono::high_resolution_clock::now();
-
-    for (int i = 0; i < maxIterations; ++i) {
-        if (function(currentPair) < function(bestPair)) {
-            bestPair = currentPair;
-        }
-        currentPair = randomSingularXY(domain.at(0), domain.at(1));
-
-        if (i % checkpoint == 0){
-            auto stop = std::chrono::high_resolution_clock::now();
-            double currentBest = function(bestPair);
-            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-            //fprintf(fp, "%d %f\n", (int)duration.count(), currentBest);
-        }
-    }
-
-    fprintf(fp,"%f\n", function(bestPair));
-    fclose(fp);
-    return function(bestPair);
-};
-
-double hillClimbing(myfunction_t function, vector<double> domain, int maxIterations=1000){
-
-    FILE *fp = NULL;
-    fp = fopen("climbing.txt", "a");
-
-    int checkpoint = maxIterations / 25;
-
-    pair<double,double> sk = randomSingularXY(domain.at(0), domain.at(1));
-
-
-    auto start = std::chrono::high_resolution_clock::now();
-
-    for(int i = 0; i < maxIterations; i++){
-        auto temp = randomVectorXY(sk, domain.at(0), domain.at(1));
-        auto bestNeighbour = *min_element(
-                temp.begin(),
-                temp.end(),
-                [function](auto domainStart, auto domainEnd) {
-                    return function(domainStart) > function(domainEnd);
-                }
-        );
-        if (function(bestNeighbour) < function(sk))
-            sk = bestNeighbour;
-
-        if (i % checkpoint == 0){
-            auto stop = std::chrono::high_resolution_clock::now();
-            double currentBest = function(sk);
-            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-            //fprintf(fp, "%d %f\n", (int)duration.count(), currentBest);
-        }
-    }
-    fprintf(fp,"%f\n", function(sk));
-    fclose(fp);
-    return function(sk);
-}
-
-double simulatedAnnealing (myfunction_t function, vector<double> domain, int maxIterations=1000) {
-    FILE *fp = NULL;
-    fp = fopen("annealing.txt", "a");
-
-    int checkpoint = maxIterations / 25;
-
-    vector<pair<double, double>> ArrayOfXY;
-    uniform_real_distribution<double> rand01(0, 1);
-    double uk = rand01(mt_generator);
-
-    auto sk = randomSingularXY(domain.at(0), domain.at(1));
-    ArrayOfXY.push_back(sk);
-    auto prevSK = sk;
-
-    auto start = std::chrono::high_resolution_clock::now();
-    for (int i = 1; i < maxIterations - 1; i++) {
-        auto tk = randomSingularXY(domain.at(0), domain.at(1));
-        if (function(tk) <= function(sk)) {
-            sk = tk;
-            ArrayOfXY.push_back(sk);
-        } else {
-            if (uk < exp(-(abs(function(tk) - function(prevSK))) / (scale(i, maxIterations, 1, abs((domain.at(0)+domain.at(1)/2)), 0.0000001) / 1000))) {
-                sk = tk;
-                ArrayOfXY.push_back(sk);
+auto genetic_algorithm = [](
+        auto initial_population, auto fitness, auto term_condition,
+        auto selection, double p_crossover,
+        auto crossover, double p_mutation,  auto mutation){
+    using namespace std;
+    uniform_real_distribution<double> uniform(0.0,1.0);
+    auto population = initial_population;
+    vector<double> population_fit = fitness(population);
+    while (!term_condition(population,population_fit)) {
+        auto parents_indexes = selection(population_fit);
+        decltype(population) new_population;
+        for (int i = 0 ; i < parents_indexes.size(); i+=2) {
+            decltype(initial_population) offspring = {population[i],population[i+1]};
+            if (uniform(mt_generator) < p_crossover) {
+                offspring = crossover(offspring);
             }
-            else{
-                sk = prevSK;
-            }
+            for (auto chromosome : offspring) new_population.push_back(chromosome);
         }
-        prevSK = sk;
-        double temp = scale(i, maxIterations, 1, 5, 0.0001);
-        //cout << temp << endl;
-        if (i % checkpoint == 0){
-            auto stop = std::chrono::high_resolution_clock::now();
-            double currentBest = function(sk);
-            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-            //fprintf(fp, "%d %f\n", (int)duration.count(), currentBest);
+        for (auto & chromosome : new_population) {
+            chromosome = mutation(chromosome,p_mutation);
         }
+        population = new_population;
+        population_fit = fitness(population);
     }
-    fprintf(fp,"%f\n", function(sk));
-    fclose(fp);
-    return function(sk);
+    return population;
 };
+using chromosome_t = std::vector<int>;
+using population_t = std::vector<chromosome_t>;
+std::vector<double> fitness_function(population_t pop){
+    return {};
+}
+std::vector<int> selection_empty(std::vector<double> fitnesses) {
+    return {};
+}
+std::vector<chromosome_t > crossover_empty(std::vector<chromosome_t > parents) {
+    return parents;
+}
+chromosome_t mutation_empty(chromosome_t parents, double p_mutation) {
+    return parents;
+}
 
 int main(int argc, char **argv){
     //FILE *gnupipe = NULL;
@@ -163,13 +77,26 @@ int main(int argc, char **argv){
    domain["threeHumpCamel"] = {-5,5};
    domain["matyas"] = {-10,10};
 
-   if( remove( "climbing.txt" ) != 0 )
-       cout << "Creating file\n";
-   if( remove( "annealing.txt" ) != 0 )
-       cout << "Creating file\n";
-   if( remove( "bruteforce.txt" ) != 0 )
-       cout << "Creating file\n";
+   population_t population = {{1,0,1,0,1,0,1}, {1,0,1,0,1,0,1}};
 
+   auto result = genetic_algorithm(population,
+                                   fitness_function,
+                                   [](auto a, auto b) { return true; },
+                                   selection_empty,
+                                   1.0,
+                                   crossover_empty,
+                                   0.01,
+                                   mutation_empty);
+   for (chromosome_t chromosome: result) {
+        cout << "[";
+        for (int p: chromosome) {
+            cout << p;
+        }
+        cout << "] ";
+   }
+   cout << endl;
+
+/*
    try {
        vector<string> arguments(argv, argv + argc);
        auto selectedFunction = arguments.at(1);
@@ -188,6 +115,7 @@ int main(int argc, char **argv){
        cout << endl;
        return 1;
    }
+   */
     //for (int i = 0; i < 8; i++) {
     //    fprintf(gnupipe, "%s\n", gnuCommands[i]);
     //}
