@@ -102,7 +102,7 @@ std::vector<double> fitness_function(population_t pop, myfunction_t function, ve
     for (int i = 0; i < pop.size(); i++){
         currPair = translate(pop.at(i));
         if (currPair.first > domain.at(0) && currPair.first < domain.at(1) && currPair.second > domain.at(0) && currPair.second < domain.at(1)){
-            result.push_back(10000 - function(currPair));
+            result.push_back(1000000 - function(currPair));
         }
         else {
             result.push_back(1 - scale(abs(currPair.first) ,100, domain.at(1), 0, 1) + 1 - scale(abs(currPair.second) ,100, domain.at(1), 0, 1));
@@ -158,6 +158,8 @@ int main(int argc, char **argv){
    try {
        vector<string> arguments(argv, argv + argc);
        auto selectedFunction = arguments.at(1);
+       //auto test = myFunctions.at(selectedFunction);
+       //cout << test({-5, 5});
        auto result = genetic_algorithm(population,
                                        fitness_function,
                                        [](auto a, auto b) { return true; },
