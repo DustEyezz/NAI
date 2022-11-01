@@ -9,6 +9,36 @@ using namespace std;
 using myfunction_t = std::function<double(pair<double, double>)>;
 std::random_device rd;
 std::mt19937 mt_generator(rd());
+using chromosome_t = std::vector<int>;
+using population_t = std::vector<chromosome_t>;
+
+pair<double, double> translate(chromosome_t chromosome){
+    using namespace std;
+    pair<double, double> result={0,0};
+    bool flagNegativeX = false;
+    if(chromosome.at(0)==1)flagNegativeX=true;
+    bool flagNegativeY = false;
+    if(chromosome.at(1)==1)flagNegativeY=true;
+
+    int splitpoint = chromosome.size()/2;
+
+
+    
+    for(int i=splitpoint;i>=3;i--){
+        result.first+=(chromosome.at(i)*pow(2,i));
+    }
+    for (int i = chromosome.size(); i < splitpoint; i--) {
+        result.second += (chromosome.at(i)*pow(2,i));
+    }
+
+    if(flagNegativeX){
+        result.first*=-1;
+    }
+    if(flagNegativeY){
+        result.second*=-1;
+    }
+    return result;
+}
 
 auto genetic_algorithm = [](
         auto initial_population, auto fitness, auto term_condition,
@@ -36,8 +66,6 @@ auto genetic_algorithm = [](
     }
     return population;
 };
-using chromosome_t = std::vector<int>;
-using population_t = std::vector<chromosome_t>;
 std::vector<double> fitness_function(population_t pop){
     return {};
 }
