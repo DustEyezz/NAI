@@ -12,6 +12,13 @@ std::mt19937 mt_generator(rd());
 using chromosome_t = std::vector<int>;
 using population_t = std::vector<chromosome_t>;
 
+double scale(double number, double oldMax, double oldMin, double newMin, double newMax)
+{
+    double OldRange = (oldMax - oldMin);
+    double NewRange = (newMax - newMin);
+    return (((number - oldMin) * NewRange) / OldRange) + newMin;
+}
+
 population_t populate(int pop_size, int chrom_size){
     srand(time(nullptr));
     population_t population;
@@ -95,12 +102,11 @@ std::vector<double> fitness_function(population_t pop, myfunction_t function, ve
     for (int i = 0; i < pop.size(); i++){
         currPair = translate(pop.at(i));
         if (currPair.first > domain.at(0) && currPair.first < domain.at(1) && currPair.second > domain.at(0) && currPair.second < domain.at(1)){
-            result.push_back(function(currPair));
+            result.push_back(1000 - function(currPair));
         }
         else {
-
+            result.push_back(1 - scale(abs(currPair.first) ,100, domain.at(1), 0, 1) + 1 - scale(abs(currPair.second) ,100, domain.at(1), 0, 1));
         }
-
     }
     return result;
 }
@@ -144,9 +150,9 @@ int main(int argc, char **argv){
     goal["matyas"] = 0;
 
    population_t population = populate(100, 100+(23316%10)*2);
-   pair<double, double> test = translate(population.at(1));
+   //pair<double, double> test = translate(population.at(1));
 
-   printf("%f %f", test.first, test.second);
+   //printf("%f %f", test.first, test.second);
 
 
    try {
