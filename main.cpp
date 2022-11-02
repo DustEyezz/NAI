@@ -19,12 +19,12 @@ double scale(double number, double oldMax, double oldMin, double newMin, double 
     return (((number - oldMin) * NewRange) / OldRange) + newMin;
 }
 
-population_t populate(int pop_size, int chrom_size){
+population_t populate(int popSize, int chromSize){
     srand(time(nullptr));
     population_t population;
-    for(int i=0;i<pop_size;i++){
+    for(int i=0;i<popSize;i++){
         chromosome_t chromosome;
-        for(int j=0;j<chrom_size;j++){
+        for(int j=0;j<chromSize;j++){
             chromosome.push_back(rand()%2);
         }
         population.push_back(chromosome);
