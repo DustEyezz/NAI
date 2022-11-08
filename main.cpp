@@ -40,7 +40,6 @@ pair<double, double> translate(chromosome_t chromosome){
     if(chromosome.at(1)==1)flagNegativeY=true;
 
     int splitpoint = chromosome.size()/2;
-    //cout << splitpoint << endl;
 
     int j = 0;
     for(int i=splitpoint;i>1;i--){
@@ -102,10 +101,15 @@ std::vector<double> fitness_function(population_t pop, myfunction_t function, ve
     for (int i = 0; i < pop.size(); i++){
         currPair = translate(pop.at(i));
         if (currPair.first > domain.at(0) && currPair.first < domain.at(1) && currPair.second > domain.at(0) && currPair.second < domain.at(1)){
-            result.push_back(1000000 - function(currPair));
+            result.push_back(10000 - function(currPair));
         }
         else {
             result.push_back(1 - scale(abs(currPair.first) ,100, domain.at(1), 0, 1) + 1 - scale(abs(currPair.second) ,100, domain.at(1), 0, 1));
+        }
+    }
+    for (double p: result) {
+        if(p>3){
+            cout << p << endl;
         }
     }
     return result;
@@ -149,7 +153,7 @@ int main(int argc, char **argv){
     goal["threeHumpCamel"] = 0;
     goal["matyas"] = 0;
 
-   population_t population = populate(100, 100+(23316%10)*2);
+   population_t population = populate(10000, 100+(23316%10)*2);
    //pair<double, double> test = translate(population.at(1));
 
    //printf("%f %f", test.first, test.second);
@@ -172,11 +176,11 @@ int main(int argc, char **argv){
                                        domain.at(selectedFunction),
                                        goal.at(selectedFunction));
        for (chromosome_t chromosome: result) {
-           cout << "[";
-           for (int p: chromosome) {
-               cout << p;
-           }
-           cout << "] ";
+           //cout << "[";
+           //for (int p: chromosome) {
+           //    cout << p;
+           //}
+           //cout << "] ";
        }
        cout << endl;
    }
