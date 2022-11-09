@@ -21,6 +21,12 @@ auto randomSingularXY = [](double a, double b) {
     uniform_real_distribution<> dis(a, b);
     return pair<double, double>(dis(mt_generator), dis(mt_generator));
 };
+auto normalSingularXY = [](double a, double b) {
+    normal_distribution<> dis(a, 0.1);
+    normal_distribution<> dis2(b, 0.1);
+
+    return pair<double, double>(dis(mt_generator), dis2(mt_generator));
+};
 
 auto randomVectorXY = [](pair<double, double> p, int a, int b) -> vector<pair<double, double>> {
     uniform_real_distribution<> dis(a, b);
@@ -103,13 +109,15 @@ double simulatedAnnealing (myfunction_t function, vector<double> domain, int max
     uniform_real_distribution<double> rand01(0, 1);
     double uk = rand01(mt_generator);
 
+
     auto sk = randomSingularXY(domain.at(0), domain.at(1));
+
     ArrayOfXY.push_back(sk);
     auto prevSK = sk;
 
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 1; i < maxIterations - 1; i++) {
-        auto tk = randomSingularXY(domain.at(0), domain.at(1));
+        pair<double, double> tk = normalSingularXY(tk.first, tk.second);
         if (function(tk) <= function(sk)) {
             sk = tk;
             ArrayOfXY.push_back(sk);
