@@ -1,195 +1,158 @@
 #include <iostream>
-#include <functional>
-#include <map>
-#include <math.h>
+#include <vector>
+#include <string>
 #include <random>
-#include <chrono>
+#include <set>
+#include <map>
+#include <functional>
 
 using namespace std;
-using myfunction_t = std::function<double(pair<double, double>)>;
-std::random_device rd;
-std::mt19937 mt_generator(rd());
-using chromosome_t = std::vector<int>;
-using population_t = std::vector<chromosome_t>;
 
-double scale(double number, double oldMax, double oldMin, double newMin, double newMax)
-{
-    double OldRange = (oldMax - oldMin);
-    double NewRange = (newMax - newMin);
-    return (((number - oldMin) * NewRange) / OldRange) + newMin;
+bool generateRandomBool(){
+    mt19937 rng(std::random_device{}());
+    return uniform_int_distribution<>{0, 1}(rng);
 }
 
-population_t populate(int popSize, int chromSize){
-    srand(time(nullptr));
-    population_t population;
-    for(int i=0;i<popSize;i++){
-        chromosome_t chromosome;
-        for(int j=0;j<chromSize;j++){
-            chromosome.push_back(rand()%2);
-        }
-        population.push_back(chromosome);
-    }
-    return population;
+int genotype_length(int index){
+    int length = 100 + (index % 10) * 2;
+    return length;
+
 }
 
-pair<double, double> translate(chromosome_t chromosome){
-    pair<double, double> result={0,0};
-    bool flagNegativeX = false;
-    if(chromosome.at(0)==1)flagNegativeX=true;
-    bool flagNegativeY = false;
-    if(chromosome.at(1)==1)flagNegativeY=true;
-
-    int splitpoint = chromosome.size()/2;
-
-    int j = 0;
-    for(int i=splitpoint;i>1;i--){
-        result.first += (chromosome.at(i) * pow(2,j));
-        j++;
+vector<int> generate_genotype(int length){
+    vector<int> bits;
+    bits.reserve(length);
+    for(int i = 0; i < length; i++){
+        bits.push_back(int(generateRandomBool()));
     }
-    j=0;
-    for (int i = chromosome.size()-1; i > splitpoint; i--) {
-        result.second += (chromosome.at(i) * pow(2,j));
-        j++;
-    }
-
-    if(flagNegativeX){
-        result.first*=-1;
-    }
-    if(flagNegativeY){
-        result.second*=-1;
-    }
-    result.first = result.first/100000000000000;
-    result.second = result.second/100000000000000;
-    return result;
+    return bits;
 }
 
-auto genetic_algorithm = [](
-        auto initial_population, auto fitness, auto term_condition,
-        auto selection,
-        double p_crossover,
-        auto crossover,
-        double p_mutation,
-        auto mutation,
-        myfunction_t function,
-        vector<double> domain,
-        double goal){
-    using namespace std;
-    uniform_real_distribution<double> uniform(0.0,1.0);
-    auto population = initial_population;
-    vector<double> population_fit = fitness(population, function, domain, goal);
-    while (!term_condition(population,population_fit)) {
-        auto parents_indexes = selection(population_fit);
-        decltype(population) new_population;
-        for (int i = 0 ; i < parents_indexes.size(); i+=2) {
-            decltype(initial_population) offspring = {population[i],population[i+1]};
-            if (uniform(mt_generator) < p_crossover) {
-                offspring = crossover(offspring);
+double binaryToDecimal(int n){
+    int num = n;
+    double dec_value = 0;
+    int base = 1;
+    int temp = num;
+    while (temp) {
+        int last_digit = temp % 10;
+        temp = temp / 10;
+        dec_value += last_digit * base;
+        base = base * 2;
+    }
+    return dec_value;
+}
+
+vector<double> genotype_into_fenotype(const vector<int>& bits, int length = 110){
+    vector<double> fenotype;
+    string x;
+    string y;
+    for(int i = 0; i < length; i++){
+        if(i % 20 == 0){
+            if(i<55){
+                x += to_string(bits[i]);
+            }else{
+                y += to_string(bits[i]);
             }
-            for (auto chromosome : offspring) new_population.push_back(chromosome);
         }
-        for (auto & chromosome : new_population) {
-            chromosome = mutation(chromosome,p_mutation);
-        }
-        population = new_population;
-        population_fit = fitness(population, function, domain, goal);
+    }
+    if(x.at(0)=='1'){
+        fenotype.push_back(binaryToDecimal(stoi(x)));
+    }else{
+        fenotype.push_back(binaryToDecimal(-1 * stoi(x)));
+    }if(x.at(0)=='1'){
+        fenotype.push_back(binaryToDecimal(stoi(y)));
+    }else{
+        fenotype.push_back(binaryToDecimal(-1 * stoi(y)));
+    }
+
+    cout << fenotype.at(0) << endl << fenotype.at(1);
+    return fenotype;
+}
+
+vector<double> populate(int ammount){
+    vector<double> population;
+    for(int i = 0; i < ammount; i++){
+        vector<int> bits = generate_genotype(genotype_length(23205));
+        vector<double> fenotype = genotype_into_fenotype(bits);
+        population.push_back(fenotype[0]);
+        population.push_back(fenotype[1]);
     }
     return population;
-};
-std::vector<double> fitness_function(population_t pop, myfunction_t function, vector<double> domain, double goal){
-    vector<double> result;
-    pair <double, double> currPair;
-    for (int i = 0; i < pop.size(); i++){
-        currPair = translate(pop.at(i));
-        if (currPair.first > domain.at(0) && currPair.first < domain.at(1) && currPair.second > domain.at(0) && currPair.second < domain.at(1)){
-            result.push_back(10000 - function(currPair));
-        }
-        else {
-            result.push_back(1 - scale(abs(currPair.first) ,100, domain.at(1), 0, 1) + 1 - scale(abs(currPair.second) ,100, domain.at(1), 0, 1));
-        }
+}
+
+///-4.5 <= x, <= 4.5
+double beale_function(double x, double y){
+    if(-10 > x || x > 10 || -10 > y || y > 10){
+        return numeric_limits<double>::max();
     }
-    for (double p: result) {
-        if(p>3){
-            cout << p << endl;
-        }
+    return pow(1.5 - x + (x * y, 2) +
+               pow(2.25 - x + x * y, 3), 2) +
+           pow(2.625 - x + (pow(x * y, 3)), 2);
+}
+
+///-5 <= x, <= 5
+double himmelblau_function(double x, double y){
+    if(-5>x || x>5 || -5>y || y>5){
+        return numeric_limits<double>::max();
     }
-    return result;
-}
-std::vector<int> selection_empty(std::vector<double> fitnesses) {
-    return {};
-}
-std::vector<chromosome_t > crossover_empty(std::vector<chromosome_t > parents) {
-    return parents;
-}
-chromosome_t mutation_empty(chromosome_t parents, double p_mutation) {
-    return parents;
+    return pow(pow(x,2)+y-11,2) + pow(x+pow(y,2)-7,2);
 }
 
-int main(int argc, char **argv){
+//int calculate_chances(double individual){
+//
+//}
+//
+//map<double, vector<double>> fitness(int ammount, const function<double(double , double )>& fun){
+//    vector<double> population = populate(ammount);
+////    map<double, vector<double>> resultsMap;
+//    vector<double> results;
+//    for(int i = 0; i < population.size(); i+=2){
+//        double result = fun(population[i], population[i + 1]);
+//        if(result != numeric_limits<double>::max() && check_if_contains(result, results)){
+//            results.push_back(result);
+//            resultsMap[result] = {population[i],population[i+1]};
+//            cout << "wynik:" << result << " x:" << population[i] << " y:" << population[i+1] << endl;
+//        }
+//    }
+//    return resultsMap;
+//}
 
-    map<string, myfunction_t> myFunctions;
-    map<string, vector<double>> domain;
-    map<string, double> goal;
-
-    myFunctions["beale"] = [](pair<double, double> xy) {
-        return (pow((1.5 - xy.first + (xy.first * xy.second)),2)) + (pow(2.25 - xy.first + (xy.first * pow(xy.second,2)),2))+(pow(2.625 - xy.first + xy.first * pow(xy.second,3),2));
-    };
-    myFunctions["himmel"] = [](pair<double, double> xy) {
-        return pow(pow(xy.first,2) + xy.second - 11,2) + pow(xy.first + pow(xy.second,2) - 7,2);
-    };
-    myFunctions["threeHumpCamel"] = [](pair<double, double> xy) {
-        return ((2 * pow(xy.first,2) - (1.05 * pow(xy.first,4)) + ((pow(xy.first,6))/6) + (xy.first*xy.second + (pow(xy.second,2)))));
-    };
-    myFunctions["matyas"] = [](pair<double, double> xy) {
-        return (0.26 * (pow(xy.first, 2) + pow(xy.second, 2)) - (0.48 * xy.first * xy.second));
-    };
-
-    domain["beale"] = {-4.5,4.5};
-    domain["himmel"] = {-5,5};
-    domain["threeHumpCamel"] = {-5,5};
-    domain["matyas"] = {-10,10};
-
-    goal["beale"] = 0;
-    goal["himmel"] = 0;
-    goal["threeHumpCamel"] = 0;
-    goal["matyas"] = 0;
-
-   population_t population = populate(10000, 100+(23316%10)*2);
-   //pair<double, double> test = translate(population.at(1));
-
-   //printf("%f %f", test.first, test.second);
-
-
-   try {
-       vector<string> arguments(argv, argv + argc);
-       auto selectedFunction = arguments.at(1);
-       //auto test = myFunctions.at(selectedFunction);
-       //cout << test({-5, 5});
-       auto result = genetic_algorithm(population,
-                                       fitness_function,
-                                       [](auto a, auto b) { return true; },
-                                       selection_empty,
-                                       1.0,
-                                       crossover_empty,
-                                       0.01,
-                                       mutation_empty,
-                                       myFunctions.at(selectedFunction),
-                                       domain.at(selectedFunction),
-                                       goal.at(selectedFunction));
-       for (chromosome_t chromosome: result) {
-           //cout << "[";
-           //for (int p: chromosome) {
-           //    cout << p;
-           //}
-           //cout << "] ";
-       }
-       cout << endl;
-   }
-   catch (std::out_of_range aor) {
-       cout << "Blad. Podaj poprawny argument. Dostepne to: ";
-       for (auto [k, v] : myFunctions) cout << k << ", ";
-       cout << endl;
-       return 1;
-   }
-
-   return 0;
+int main() {
+    vector<double> population = populate(100);
+    genotype_into_fenotype(population.at(1));   
+    return 0;
 }
+
+//bool check_if_contains(double number, const vector<double>& list){
+//    for(double i : list){
+//        if(i == number){
+//            return false;
+//        }
+//    }
+//    return true;
+//}
+//map<double, vector<double>> sortByKey(map<double, vector<double>> inputMap, int amount){
+//    map<double, vector<double>> returnMap;
+//    for(int i = 0 ; i < amount ; i++){
+//        map<double, vector<double>>::iterator pointer = inputMap.begin();
+//        for(map<double, vector<double>>::iterator it = inputMap.begin(); it != inputMap.end() ; it.operator++()){
+//            if(pointer -> first > it -> first){
+//                pointer = it;
+//                inputMap.erase(pointer->first);
+//            }
+//        }
+//        returnMap[pointer -> first] = pointer -> second;
+//    }
+//    return returnMap;
+//}
+//
+//void printMap(const map<double, vector<double>>& inputMap){
+//    map<double, vector<double>>::iterator itr;
+//    for(auto [a, b]:inputMap){
+//    cout<<a<<" "<<a<<endl;
+//    }
+//}
+//int add_randomness(){
+//    mt19937 rng(std::random_device{}());
+//    return uniform_int_distribution<>{-1, 1}(rng);
+//}
