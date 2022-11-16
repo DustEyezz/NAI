@@ -58,8 +58,8 @@ pair<double, double> translate(chromosome_t chromosome){
     if(flagNegativeY){
         result.second*=-1;
     }
-    result.first = result.first/100000000000000;
-    result.second = result.second/100000000000000;
+    result.first = result.first/1000000000000000;
+    result.second = result.second/1000000000000000;
     return result;
 }
 
@@ -203,23 +203,37 @@ int main(int argc, char **argv){
        auto selectedFunction = arguments.at(1);
        //auto test = myFunctions.at(selectedFunction);
        //cout << test({-5, 5});
-       auto result = genetic_algorithm(population,
+       population = genetic_algorithm(population,
                                        fitness_function,
                                        [](auto a, auto b) { return true; },
                                        selection,
                                        1.0,
                                        crossover_empty,
-                                       0.01,
+                                       0.99,
                                        mutation_empty,
                                        myFunctions.at(selectedFunction),
                                        domain.at(selectedFunction),
                                        goal.at(selectedFunction));
-       for (chromosome_t chromosome: result) {
+       /*for (chromosome_t chromosome: result) {
            cout << "[";
            for (int p: chromosome) {
                cout << p;
            }
            cout << "] ";
+       }
+       */
+       for (int i = 0; i < 1000; ++i) {
+           population = genetic_algorithm(population,
+                                          fitness_function,
+                                          [](auto a, auto b) { return true; },
+                                          selection,
+                                          1.0,
+                                          crossover_empty,
+                                          0.01,
+                                          mutation_empty,
+                                          myFunctions.at(selectedFunction),
+                                          domain.at(selectedFunction),
+                                          goal.at(selectedFunction));
        }
        cout << endl;
    }
