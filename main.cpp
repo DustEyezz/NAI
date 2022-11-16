@@ -212,7 +212,7 @@ int main(int argc, char **argv){
                                        fitness_function,
                                        [](auto a, auto b) {
                                            for (auto elem: b) {
-                                                if(elem > 9990){
+                                                if(elem > 9999){
                                                     return true;
                                                 }
                                            };
@@ -234,19 +234,6 @@ int main(int argc, char **argv){
            cout << "] ";
        }
        */
-       for (int i = 0; i < 1000; ++i) {
-           population = genetic_algorithm(population,
-                                          fitness_function,
-                                          [](auto a, auto b) { return true; },
-                                          selection,
-                                          1.0,
-                                          crossover_empty,
-                                          0.01,
-                                          mutation_empty,
-                                          myFunctions.at(selectedFunction),
-                                          domain.at(selectedFunction),
-                                          goal.at(selectedFunction));
-       }
        //cout << endl;
    }
    catch (std::out_of_range aor) {
