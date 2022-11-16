@@ -114,14 +114,53 @@ std::vector<double> fitness_function(population_t pop, myfunction_t function, ve
     }
     return result;
 }
-std::vector<int> selection_empty(std::vector<double> fitnesses) {
-    return {};
+std::vector<int> selection(std::vector<double> fitnesses) {
+    uniform_real_distribution<> randomNumb(0.0,1.0);
+    double R = randomNumb(mt_generator);
+    double S = 0;
+    double P = 0;
+    double lastP = 0;
+    for (double elem : fitnesses){
+        S += elem;
+    }
+    double p = 0;
+    std::vector<int> resVector;
+    for (int i = 0; i < fitnesses.size(); i++) {
+        p = fitnesses.at(i) / S;
+        P = lastP + p;
+        if(lastP <= R && lastP <= P){
+            resVector.push_back(i);
+        }
+        lastP = P;
+    }
+    return resVector;
 }
 std::vector<chromosome_t > crossover_empty(std::vector<chromosome_t > parents) {
+    uniform_real_distribution<double> randomPoint(0,parents.at(0).size());
+    int swapPoint = randomPoint(mt_generator);
+    for (int i = swapPoint; i < parents.at(0).size(); i++) {
+        int temp = parents.at(0).at(i);
+        parents.at(0).at(i) = parents.at(1).at(i);
+        parents.at(1).at(i) = temp;
+    }
     return parents;
 }
-chromosome_t mutation_empty(chromosome_t parents, double p_mutation) {
-    return parents;
+chromosome_t mutation_empty(chromosome_t parent, double p_mutation) {
+    uniform_real_distribution<> randomNumb(0.0,1.0);
+    uniform_real_distribution<> randomCount(0, 5);
+    uniform_real_distribution<> randomPoint(0, parent.size());
+    if(randomNumb(mt_generator) < p_mutation){
+        for (int i = 0; i < randomCount(mt_generator); i++) {
+            int currPoint = randomPoint(mt_generator);
+            if (parent.at(currPoint) == 0){
+                parent.at(currPoint) = 1;
+            } else{
+                parent.at(currPoint) = 0;
+            }
+        }
+    }
+
+    return parent;
 }
 
 int main(int argc, char **argv){
@@ -167,7 +206,7 @@ int main(int argc, char **argv){
        auto result = genetic_algorithm(population,
                                        fitness_function,
                                        [](auto a, auto b) { return true; },
-                                       selection_empty,
+                                       selection,
                                        1.0,
                                        crossover_empty,
                                        0.01,
@@ -176,11 +215,11 @@ int main(int argc, char **argv){
                                        domain.at(selectedFunction),
                                        goal.at(selectedFunction));
        for (chromosome_t chromosome: result) {
-           //cout << "[";
-           //for (int p: chromosome) {
-           //    cout << p;
-           //}
-           //cout << "] ";
+           cout << "[";
+           for (int p: chromosome) {
+               cout << p;
+           }
+           cout << "] ";
        }
        cout << endl;
    }
