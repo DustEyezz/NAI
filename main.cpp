@@ -107,11 +107,13 @@ std::vector<double> fitness_function(population_t pop, myfunction_t function, ve
             result.push_back(1 - scale(abs(currPair.first) ,100, domain.at(1), 0, 1) + 1 - scale(abs(currPair.second) ,100, domain.at(1), 0, 1));
         }
     }
+    int goodCount = 0;
     for (double p: result) {
-        if(p>3){
-            cout << p << endl;
+        if(p>9990){
+            goodCount++;
         }
     }
+    cout << goodCount;
     return result;
 }
 std::vector<int> selection(std::vector<double> fitnesses) {
@@ -124,12 +126,15 @@ std::vector<int> selection(std::vector<double> fitnesses) {
         S += elem;
     }
     double p = 0;
+    //cout << P;
     std::vector<int> resVector;
     for (int i = 0; i < fitnesses.size(); i++) {
         p = fitnesses.at(i) / S;
         P = lastP + p;
+        //cout << P;
         if(lastP <= R && lastP <= P){
             resVector.push_back(i);
+            //cout<<"done";
         }
         lastP = P;
     }
@@ -192,7 +197,7 @@ int main(int argc, char **argv){
     goal["threeHumpCamel"] = 0;
     goal["matyas"] = 0;
 
-   population_t population = populate(10000, 100+(23316%10)*2);
+   population_t population = populate(1000, 100+(23316%10)*2);
    //pair<double, double> test = translate(population.at(1));
 
    //printf("%f %f", test.first, test.second);
@@ -205,11 +210,18 @@ int main(int argc, char **argv){
        //cout << test({-5, 5});
        population = genetic_algorithm(population,
                                        fitness_function,
-                                       [](auto a, auto b) { return true; },
+                                       [](auto a, auto b) {
+                                           for (auto elem: b) {
+                                                if(elem > 9990){
+                                                    return true;
+                                                }
+                                           };
+                                           return false;
+                                           },
                                        selection,
                                        1.0,
                                        crossover_empty,
-                                       0.99,
+                                       0.05,
                                        mutation_empty,
                                        myFunctions.at(selectedFunction),
                                        domain.at(selectedFunction),
@@ -235,7 +247,7 @@ int main(int argc, char **argv){
                                           domain.at(selectedFunction),
                                           goal.at(selectedFunction));
        }
-       cout << endl;
+       //cout << endl;
    }
    catch (std::out_of_range aor) {
        cout << "Blad. Podaj poprawny argument. Dostepne to: ";
