@@ -152,15 +152,13 @@ std::vector<chromosome_t > crossover_empty(std::vector<chromosome_t > parents) {
 }
 chromosome_t mutation_empty(chromosome_t parent, double p_mutation) {
     uniform_real_distribution<> randomNumb(0.0,1.0);
-    uniform_real_distribution<> randomCount(0, 5);
-    uniform_real_distribution<> randomPoint(0, parent.size());
-    if(randomNumb(mt_generator) < p_mutation){
-        for (int i = 0; i < randomCount(mt_generator); i++) {
-            int currPoint = randomPoint(mt_generator);
-            if (parent.at(currPoint) == 0){
-                parent.at(currPoint) = 1;
+
+    for (int i = 0; i < parent.size(); i++) {
+        if(randomNumb(mt_generator) < p_mutation){
+            if (parent.at(i) == 0){
+                parent.at(i) = 1;
             } else{
-                parent.at(currPoint) = 0;
+                parent.at(i) = 0;
             }
         }
     }
@@ -202,7 +200,6 @@ int main(int argc, char **argv){
 
    //printf("%f %f", test.first, test.second);
 
-
    try {
        vector<string> arguments(argv, argv + argc);
        auto selectedFunction = arguments.at(1);
@@ -212,7 +209,8 @@ int main(int argc, char **argv){
                                        fitness_function,
                                        [](auto a, auto b) {
                                            for (auto elem: b) {
-                                                if(elem > 9999){
+                                                if(elem >= 9999.999){
+                                                    cout << endl << 10000-elem;
                                                     return true;
                                                 }
                                            };
