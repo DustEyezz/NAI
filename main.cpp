@@ -11,6 +11,7 @@ std::random_device rd;
 std::mt19937 mt_generator(rd());
 using chromosome_t = std::vector<int>;
 using population_t = std::vector<chromosome_t>;
+using myTerm = std::function<bool(population_t a, vector<double> b, int iterCount, int iteration)>;
 
 double scale(double number, double oldMax, double oldMin, double newMin, double newMax)
 {
@@ -30,6 +31,31 @@ population_t populate(int popSize, int chromSize){
         population.push_back(chromosome);
     }
     return population;
+}
+
+vector<double> popStatistics(vector<double> fitness){
+    double max = 0;
+    double min = fitness.at(0);
+    double fitSum = 0;
+    double fitAvg = 0;
+    for (auto elem : fitness){
+        fitSum += elem;
+        if(elem > max){
+            max = elem;
+        }else if (elem < min){
+            min = elem;
+        }
+    }
+
+    fitAvg = fitSum / fitness.size();
+
+    vector<double> resVector;
+
+    resVector.push_back(min);
+    resVector.push_back(max);
+    resVector.push_back(fitAvg);
+
+    return resVector;
 }
 
 pair<double, double> translate(chromosome_t chromosome){
@@ -66,18 +92,21 @@ pair<double, double> translate(chromosome_t chromosome){
 auto genetic_algorithm = [](
         auto initial_population, auto fitness, auto term_condition,
         auto selection,
+        auto iterCount,
         double p_crossover,
         auto crossover,
         double p_mutation,
         auto mutation,
         myfunction_t function,
         vector<double> domain,
-        double goal){
+        double goal,
+        bool print){
     using namespace std;
+    int iteration = 0;
     uniform_real_distribution<double> uniform(0.0,1.0);
     auto population = initial_population;
-    vector<double> population_fit = fitness(population, function, domain, goal);
-    while (!term_condition(population,population_fit)) {
+    vector<double> population_fit = fitness(population, function, domain, goal, print, iteration);
+    while (!term_condition(population,population_fit, iterCount, iteration)) {
         auto parents_indexes = selection(population_fit);
         decltype(population) new_population;
         for (int i = 0 ; i < parents_indexes.size(); i+=2) {
@@ -91,11 +120,14 @@ auto genetic_algorithm = [](
             chromosome = mutation(chromosome,p_mutation);
         }
         population = new_population;
-        population_fit = fitness(population, function, domain, goal);
+        population_fit = fitness(population, function, domain, goal, print, iteration);
+
+
+        iteration++;
     }
     return population;
 };
-std::vector<double> fitness_function(population_t pop, myfunction_t function, vector<double> domain, double goal){
+std::vector<double> fitness_function(population_t pop, myfunction_t function, vector<double> domain, double goal, bool print, int iteration){
     vector<double> result;
     pair <double, double> currPair;
     for (int i = 0; i < pop.size(); i++){
@@ -107,13 +139,13 @@ std::vector<double> fitness_function(population_t pop, myfunction_t function, ve
             result.push_back(1 - scale(abs(currPair.first) ,100, domain.at(1), 0, 1) + 1 - scale(abs(currPair.second) ,100, domain.at(1), 0, 1));
         }
     }
-    int goodCount = 0;
-    for (double p: result) {
-        if(p>9990){
-            goodCount++;
-        }
+    if (print){
+        vector<double> toPrint = popStatistics(result);
+        cout << "iteration: " << iteration << endl;
+        cout << "min: " << toPrint.at(0) << endl;
+        cout << "max: " << toPrint.at(1) << endl;
+        cout << "avg: " << toPrint.at(2) << endl;
     }
-    cout << goodCount;
     return result;
 }
 std::vector<int> selection(std::vector<double> fitnesses) {
@@ -126,15 +158,12 @@ std::vector<int> selection(std::vector<double> fitnesses) {
         S += elem;
     }
     double p = 0;
-    //cout << P;
     std::vector<int> resVector;
     for (int i = 0; i < fitnesses.size(); i++) {
         p = fitnesses.at(i) / S;
         P = lastP + p;
-        //cout << P;
         if(lastP <= R && lastP <= P){
             resVector.push_back(i);
-            //cout<<"done";
         }
         lastP = P;
     }
@@ -166,9 +195,17 @@ chromosome_t mutation_empty(chromosome_t parent, double p_mutation) {
     return parent;
 }
 
-int main(int argc, char **argv){
+int main(int argc, char *argv[]){
+    int popSize = 1000;
+    int iterCount = 1000;
+    double crossChance = 0;
+    double mutateChance = 0;
+    auto selectedFunction = "beale";
+    auto selectedTerm = "standard";
+    bool toPrint = false;
 
     map<string, myfunction_t> myFunctions;
+    map<string, myTerm> termConditions;
     map<string, vector<double>> domain;
     map<string, double> goal;
 
@@ -184,6 +221,41 @@ int main(int argc, char **argv){
     myFunctions["matyas"] = [](pair<double, double> xy) {
         return (0.26 * (pow(xy.first, 2) + pow(xy.second, 2)) - (0.48 * xy.first * xy.second));
     };
+    termConditions["standard"] = [](auto a, auto b, int iterCount, int iteration) {
+        return iteration > iterCount;
+    };
+    termConditions["custom"] = [](auto a, auto b, int iterCount, int iteration) {
+        for (auto elem: b) {
+            if(elem >= 9999.999){
+                cout << endl << 10000-elem;
+                return true;
+            }
+        };
+        return false;
+    };
+
+    for (int i = 1; i < argc; i += 2) {
+        if (i + 1 != argc) {
+            if (string(argv[i]) == "-p") {
+                popSize = atoi(argv[i + 1]);
+            } else if (string(argv[i]) == "-i") {
+                iterCount = atoi(argv[i + 1]);
+            } else if (string(argv[i]) == "-c") {
+                crossChance = atof(argv[i + 1]);
+            } else if (string(argv[i]) == "-m") {
+                mutateChance = atof(argv[i + 1]);
+            } else if (string(argv[i]) == "-f") {
+                selectedFunction = argv[i + 1];
+            } else if (string(argv[i]) == "-t") {
+                selectedTerm = argv[i + 1];
+            } else if (string(argv[i]) == "-s") {
+                toPrint = atoi(argv[i + 1]);
+            } else {
+                cout << "invalid argument: " << argv[i] << endl;
+                return 1;
+            }
+        }
+    }
 
     domain["beale"] = {-4.5,4.5};
     domain["himmel"] = {-5,5};
@@ -195,44 +267,30 @@ int main(int argc, char **argv){
     goal["threeHumpCamel"] = 0;
     goal["matyas"] = 0;
 
-   population_t population = populate(1000, 100+(23316%10)*2);
-   //pair<double, double> test = translate(population.at(1));
-
-   //printf("%f %f", test.first, test.second);
-
-   try {
-       vector<string> arguments(argv, argv + argc);
-       auto selectedFunction = arguments.at(1);
-       //auto test = myFunctions.at(selectedFunction);
-       //cout << test({-5, 5});
-       population = genetic_algorithm(population,
+    population_t population = populate(popSize, 100+(23316%10)*2);
+    try {
+        population = genetic_algorithm(population,
                                        fitness_function,
-                                       [](auto a, auto b) {
-                                           for (auto elem: b) {
-                                                if(elem >= 9999.999){
-                                                    cout << endl << 10000-elem;
-                                                    return true;
-                                                }
-                                           };
-                                           return false;
-                                           },
+                                       termConditions.at(selectedTerm),
                                        selection,
-                                       1.0,
+                                       iterCount,
+                                       crossChance,
                                        crossover_empty,
-                                       0.05,
+                                       mutateChance,
                                        mutation_empty,
                                        myFunctions.at(selectedFunction),
                                        domain.at(selectedFunction),
-                                       goal.at(selectedFunction));
-       /*for (chromosome_t chromosome: result) {
-           cout << "[";
-           for (int p: chromosome) {
-               cout << p;
-           }
-           cout << "] ";
-       }
-       */
-       //cout << endl;
+                                       goal.at(selectedFunction),
+                                       toPrint);
+        /*for (chromosome_t chromosome: result) {
+            cout << "[";
+            for (int p: chromosome) {
+                cout << p;
+            }
+            cout << "] ";
+        }
+        */
+        //cout << endl;
    }
    catch (std::out_of_range aor) {
        cout << "Blad. Podaj poprawny argument. Dostepne to: ";
