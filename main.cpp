@@ -13,6 +13,23 @@ using chromosome_t = std::vector<int>;
 using population_t = std::vector<chromosome_t>;
 using myTerm = std::function<bool(population_t a, vector<double> b, int iterCount, int iteration)>;
 
+double findStandardDeviation(vector<double> numbers) {
+    float sum = 0.0, sDeviation = 0.0, mean;
+    int i;
+
+    for(i = 0; i < numbers.size(); i++) {
+        sum += numbers.at(i);
+    }
+    // Calculating mean
+    mean = sum/numbers.size();
+
+    for(i = 0; i < numbers.size(); ++i) {
+        sDeviation += pow(numbers.at(i) - mean, 2);
+    }
+
+    return sqrt(sDeviation/numbers.size());
+}
+
 double scale(double number, double oldMax, double oldMin, double newMin, double newMax)
 {
     double OldRange = (oldMax - oldMin);
@@ -37,7 +54,6 @@ vector<double> popStatistics(vector<double> fitness){
     double max = 0;
     double min = fitness.at(0);
     double fitSum = 0;
-    double fitAvg = 0;
     for (auto elem : fitness){
         fitSum += elem;
         if(elem > max){
@@ -47,7 +63,7 @@ vector<double> popStatistics(vector<double> fitness){
         }
     }
 
-    fitAvg = fitSum / fitness.size();
+    double fitAvg = fitSum / fitness.size();
 
     vector<double> resVector;
 
@@ -84,8 +100,8 @@ pair<double, double> translate(chromosome_t chromosome){
     if(flagNegativeY){
         result.second*=-1;
     }
-    result.first = result.first/1000000000000000;
-    result.second = result.second/1000000000000000;
+    result.first = result.first/10000000000000000;
+    result.second = result.second/10000000000000000;
     return result;
 }
 
@@ -225,37 +241,14 @@ int main(int argc, char *argv[]){
         return iteration > iterCount;
     };
     termConditions["custom"] = [](auto a, auto b, int iterCount, int iteration) {
-        for (auto elem: b) {
-            if(elem >= 9999.999){
-                cout << endl << 10000-elem;
-                return true;
-            }
-        };
-        return false;
+        if (findStandardDeviation(b) <= 0.0001){
+            cout << "deviaton: "<< findStandardDeviation(b) << endl;
+            return true;
+        } else{
+            return false;
+        }
     };
 
-    for (int i = 1; i < argc; i += 2) {
-        if (i + 1 != argc) {
-            if (string(argv[i]) == "-p") {
-                popSize = atoi(argv[i + 1]);
-            } else if (string(argv[i]) == "-i") {
-                iterCount = atoi(argv[i + 1]);
-            } else if (string(argv[i]) == "-c") {
-                crossChance = atof(argv[i + 1]);
-            } else if (string(argv[i]) == "-m") {
-                mutateChance = atof(argv[i + 1]);
-            } else if (string(argv[i]) == "-f") {
-                selectedFunction = argv[i + 1];
-            } else if (string(argv[i]) == "-t") {
-                selectedTerm = argv[i + 1];
-            } else if (string(argv[i]) == "-s") {
-                toPrint = atoi(argv[i + 1]);
-            } else {
-                cout << "invalid argument: " << argv[i] << endl;
-                return 1;
-            }
-        }
-    }
 
     domain["beale"] = {-4.5,4.5};
     domain["himmel"] = {-5,5};
@@ -269,6 +262,29 @@ int main(int argc, char *argv[]){
 
     population_t population = populate(popSize, 100+(23316%10)*2);
     try {
+        for (int i = 1; i < argc; i += 2) {
+            if (i + 1 != argc) {
+                if (string(argv[i]) == "-p") {
+                    popSize = atoi(argv[i + 1]);
+                } else if (string(argv[i]) == "-i") {
+                    iterCount = atoi(argv[i + 1]);
+                } else if (string(argv[i]) == "-c") {
+                    crossChance = atof(argv[i + 1]);
+                } else if (string(argv[i]) == "-m") {
+                    mutateChance = atof(argv[i + 1]);
+                } else if (string(argv[i]) == "-f") {
+                    selectedFunction = argv[i + 1];
+                } else if (string(argv[i]) == "-t") {
+                    selectedTerm = argv[i + 1];
+                } else if (string(argv[i]) == "-s") {
+                    toPrint = atoi(argv[i + 1]);
+                } else {
+                    cout << "invalid argument: " << argv[i] << endl;
+                    return 1;
+                }
+            }
+        }
+
         population = genetic_algorithm(population,
                                        fitness_function,
                                        termConditions.at(selectedTerm),
