@@ -1,42 +1,24 @@
-#include <functional>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include <iostream>
-#include <map>
-#include <string>
-#include <vector>
-#include <cmath>
-using myfunction_t = std::function<double(std::vector<double>)>;
-void calc(std::vector<double> numbers, myfunction_t fun) {
-    using namespace std;
-    cout << fun(numbers) << endl;
-}
-int main(int argc, char **argv) {
-    using namespace std;
-    map<string, myfunction_t> formaters;
-    formaters["mod"] = [](vector<double> numbers) { return (int)numbers.front() % (int)numbers.back();};
-    formaters["add"] = [](vector<double> numbers) { return  numbers.front() + numbers.back();};
-    formaters["sin"] = [](vector<double> numbers) { return sin(numbers.front());};
-    try {
-        vector<string> arguments(argv, argv + argc);
-        auto selected_f = arguments.at(2);
-        if (arguments.size() > 5){
-            cout << "Blad. Zbyt duzo argumentow: " << arguments.size() - 1;
-            return 1;
-        }
-        else if(selected_f == "sin" && arguments.size() > 4){
-            cout << "Blad. Zbyt duzo argumentow przy wyborze sin, max to 1 argument ";
-            return 1;
-        }
-        else if (arguments.at(1) != "lab1"){
-            cout << "Blad, brakuje lab1 na poczatku";
-            return 1;
-        }
-        vector<double> numbers = {{stod(arguments.at(3)), stod(arguments.back())}};
-        calc(numbers, formaters.at(selected_f));
-    } catch (std::out_of_range aor) {
-        cout << "Blad. Podaj poprawny argument. Dostepne to: ";
-        for (auto [k, v] : formaters) cout << " " << k;
-        cout << endl;
-        return 1;
+
+int main(int argc, char** argv)
+{
+    using namespace cv;
+    VideoCapture vc(0);
+    if (!vc.isOpened() ) return 1;
+    cv::Mat frame;
+    cv::Mat myFrame;
+
+    cv::namedWindow("Window", WINDOW_AUTOSIZE); // Create a window for display.
+    int i = 0;
+    while (waitKey(10) != 27) {
+        vc >> frame;
+        std::cout << "frame info: " << frame.rows << " " << frame.cols << std::endl;
+        //imwrite("frame" + std::to_string(i++) + ".png", frame);
+        cv::flip(frame, myFrame, 1);
+        cv::imshow("Frame", myFrame);
+
     }
     return 0;
 }
