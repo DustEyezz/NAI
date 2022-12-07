@@ -126,7 +126,7 @@ auto genetic_algorithm = [](
         auto parents_indexes = selection(population_fit);
         decltype(population) new_population;
         for (int i = 0 ; i < parents_indexes.size(); i+=2) {
-            decltype(initial_population) offspring = {population[i],population[i+1]};
+            decltype(initial_population) offspring = {population[parents_indexes[i]],population[parents_indexes[i+1]]};
             if (uniform(mt_generator) < p_crossover) {
                 offspring = crossover(offspring);
             }
@@ -165,24 +165,38 @@ std::vector<double> fitness_function(population_t pop, myfunction_t function, ve
     return result;
 }
 std::vector<int> selection(std::vector<double> fitnesses) {
-    uniform_real_distribution<> randomNumb(0.0,1.0);
-    double R = randomNumb(mt_generator);
-    double S = 0;
-    double P = 0;
-    double lastP = 0;
-    for (double elem : fitnesses){
-        S += elem;
+    double sumF = 0;
+
+    for (double elem : fitnesses) {
+        sumF += elem;
     }
-    double p = 0;
+    double probabilitySum = 0;
+    vector<double> probabilityArray;
+
+    for(int i = 0; i < fitnesses.size(); i++){
+        double probability = fitnesses.at(i) / sumF;
+        probabilityArray.push_back(probability);
+        probabilitySum += probability;
+    }
+
+    uniform_real_distribution<> randomNumb(0.0,probabilitySum);
     std::vector<int> resVector;
-    for (int i = 0; i < fitnesses.size(); i++) {
-        p = fitnesses.at(i) / S;
-        P = lastP + p;
-        if(lastP <= R && lastP <= P){
-            resVector.push_back(i);
+
+    while (resVector.size() < fitnesses.size()){
+        double number = randomNumb(mt_generator);
+        for(int i = 0; i < probabilityArray.size()-1; i++){
+            if (number > probabilityArray.at(i) && number < probabilityArray.at(i+1)){
+                resVector.push_back(i);
+                if(resVector.size() >= fitnesses.size()){
+                    break;
+                }
+            }
+            if(resVector.size() >= fitnesses.size()){
+                break;
+            }
         }
-        lastP = P;
     }
+
     return resVector;
 }
 std::vector<chromosome_t > crossover_empty(std::vector<chromosome_t > parents) {
@@ -237,11 +251,11 @@ int main(int argc, char *argv[]){
     myFunctions["matyas"] = [](pair<double, double> xy) {
         return (0.26 * (pow(xy.first, 2) + pow(xy.second, 2)) - (0.48 * xy.first * xy.second));
     };
-    termConditions["standard"] = [](auto a, auto b, int iterCount, int iteration) {
+    termConditions["standard"] = [(auto a, auto b, int iterCount, int iteration) {
         return iteration > iterCount;
     };
     termConditions["custom"] = [](auto a, auto b, int iterCount, int iteration) {
-        if (findStandardDeviation(b) <= 0.0001){
+        if (findStandardDeviation(b) <= 0.1){
             cout << "deviaton: "<< findStandardDeviation(b) << endl;
             return true;
         } else{
