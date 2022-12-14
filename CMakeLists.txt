@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.21)
 project(NAI)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(NAI main.cpp)
 
 # UWAGA: TU ZAMIEN KATALOG W KTORYM JEST OPENCV!!!!
-set(OpenCV_DIR "D:\\opencv\\opencv-4.x\\opencv-4.x\\cmake-build-release")
+set(OpenCV_DIR "D:\\opencv\\opencv-4.x\\cmake-build-release")
 
 find_package( OpenCV REQUIRED )
 

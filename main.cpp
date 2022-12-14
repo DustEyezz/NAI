@@ -43,7 +43,7 @@ int main(int argc, char **argv)
         //cout << " " << selected[0] << endl;
 
 
-        if(contours.size()>2){
+        if(contours.size()>1 && contours.at(1).size() > 1 && contours.at(0).size() > 1){
             if (abs((contours.at(0).at(0).height) - (contours.at(1).at(0).height)) < 10){
                 cv::line(dst, contours.at(0).at(0), contours.at(1).at(0), {255,0,0}, 1);
                 cv::line(dst, contours.at(0).at(2), contours.at(1).at(2), {255,0,0}, 1);
