@@ -1,7 +1,6 @@
 CMakeFiles/NAI.dir/main.cpp.obj: \
  C:\Users\s23316\Documents\GitHub\NAI\main.cpp \
- D:/opencv/opencv-4.x/opencv-4.x/include/opencv2/opencv.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/cmake-build-release/opencv2/opencv_modules.hpp \
+ D:/opencv/opencv-4.x/opencv-4.x/modules/core/include/opencv2/core/core.hpp \
  D:/opencv/opencv-4.x/opencv-4.x/modules/core/include/opencv2/core.hpp \
  D:/opencv/opencv-4.x/opencv-4.x/modules/core/include/opencv2/core/cvdef.h \
  D:/opencv/opencv-4.x/opencv-4.x/modules/core/include/opencv2/core/version.hpp \
@@ -63,6 +62,7 @@ CMakeFiles/NAI.dir/main.cpp.obj: \
  C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/predefined_ops.h \
  C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/range_access.h \
  D:/opencv/opencv-4.x/opencv-4.x/modules/core/include/opencv2/core/base.hpp \
+ D:/opencv/opencv-4.x/opencv-4.x/cmake-build-release/opencv2/opencv_modules.hpp \
  C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/climits \
  C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/algorithm \
  C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/stl_algo.h \
@@ -243,109 +243,8 @@ CMakeFiles/NAI.dir/main.cpp.obj: \
  D:/opencv/opencv-4.x/opencv-4.x/modules/core/include/opencv2/core/optim.hpp \
  D:/opencv/opencv-4.x/opencv-4.x/modules/core/include/opencv2/core/ovx.hpp \
  D:/opencv/opencv-4.x/opencv-4.x/modules/core/include/opencv2/core/cvdef.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/calib3d/include/opencv2/calib3d.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/features2d/include/opencv2/features2d.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/miniflann.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/defines.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/config.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/core/include/opencv2/core/affine.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/dnn/include/opencv2/dnn.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/dnn/include/opencv2/dnn/dnn.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/core/include/opencv2/core/async.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/dnn/include/opencv2/dnn/version.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/dnn/include/opencv2/dnn/dict.hpp \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/map \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/stl_tree.h \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/stl_map.h \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/stl_multimap.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/dnn/include/opencv2/dnn/layer.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/dnn/include/opencv2/dnn/dnn.inl.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/dnn/include/opencv2/dnn/utils/inference_engine.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/dnn/include/opencv2/dnn/dnn.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/flann_base.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/general.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/matrix.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/params.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/any.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/defines.h \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/iostream \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/saving.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/nn_index.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/result_set.h \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/set \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/stl_set.h \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/stl_multiset.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/all_indices.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/kdtree_index.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/dynamic_bitset.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/dist.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/heap.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/allocator.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/random.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/kdtree_single_index.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/kmeans_index.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/logger.h \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/stdarg.h \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/x86_64-w64-mingw32/include/stdarg.h \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/x86_64-w64-mingw32/include/_mingw_stdarg.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/composite_index.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/linear_index.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/hierarchical_clustering_index.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/lsh_index.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/lsh_table.h \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/iomanip \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/locale \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/locale_facets_nonio.h \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32/bits/time_members.h \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32/bits/messages_members.h \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/codecvt.h \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/locale_facets_nonio.tcc \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/locale_conv.h \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/quoted_string.h \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/math.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/autotuned_index.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/ground_truth.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/index_testing.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/timer.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/flann/include/opencv2/flann/sampling.h \
+ D:/opencv/opencv-4.x/opencv-4.x/modules/highgui/include/opencv2/highgui/highgui.hpp \
  D:/opencv/opencv-4.x/opencv-4.x/modules/highgui/include/opencv2/highgui.hpp \
  D:/opencv/opencv-4.x/opencv-4.x/modules/imgcodecs/include/opencv2/imgcodecs.hpp \
  D:/opencv/opencv-4.x/opencv-4.x/modules/videoio/include/opencv2/videoio.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/imgproc/include/opencv2/imgproc.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/imgproc/include/opencv2/imgproc/segmentation.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/ml/include/opencv2/ml.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/ml/include/opencv2/ml/ml.inl.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/objdetect/include/opencv2/objdetect.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/objdetect/include/opencv2/objdetect/detection_based_tracker.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/objdetect/include/opencv2/objdetect/face.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/photo/include/opencv2/photo.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/stitching/include/opencv2/stitching.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/stitching/include/opencv2/stitching/warpers.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/stitching/include/opencv2/stitching/detail/warpers.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/core/include/opencv2/core/cuda.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/core/include/opencv2/core/cuda_types.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/core/include/opencv2/core/cuda.inl.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/stitching/include/opencv2/stitching/detail/warpers_inl.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/stitching/include/opencv2/stitching/detail/warpers.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/stitching/include/opencv2/stitching/detail/matchers.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/stitching/include/opencv2/stitching/detail/motion_estimators.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/stitching/include/opencv2/stitching/detail/matchers.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/stitching/include/opencv2/stitching/detail/util.hpp \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/list \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/stl_list.h \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/list.tcc \
- D:/opencv/opencv-4.x/opencv-4.x/modules/stitching/include/opencv2/stitching/detail/util_inl.hpp \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/queue \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/deque \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/stl_deque.h \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/deque.tcc \
- C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/stl_queue.h \
- D:/opencv/opencv-4.x/opencv-4.x/modules/stitching/include/opencv2/stitching/detail/camera.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/stitching/include/opencv2/stitching/detail/exposure_compensate.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/stitching/include/opencv2/stitching/detail/seam_finders.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/stitching/include/opencv2/stitching/detail/blenders.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/stitching/include/opencv2/stitching/detail/camera.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/video/include/opencv2/video.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/video/include/opencv2/video/tracking.hpp \
- D:/opencv/opencv-4.x/opencv-4.x/modules/video/include/opencv2/video/background_segm.hpp
+ C:/PROGRA~1/JETBRA~1/CLION2~1.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/iostream
