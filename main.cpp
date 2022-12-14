@@ -37,15 +37,19 @@ int main(int argc, char **argv)
         vector<Vec4i> hierarchy;
         findContours (dilated, contours, hierarchy, RETR_LIST, CHAIN_APPROX_SIMPLE);
         //cout << contours.size() << endl;
-        auto selected = *std::max_element(contours.begin(), contours.end(), [](auto a, auto b){
-            return contourArea(a) < contourArea(b);});
-        std::sort(contours.begin(), contours.end(), selected());
+        auto selected = [](auto a, auto b){
+            return contourArea(a) < contourArea(b);};
+        std::sort(contours.begin(), contours.end(), selected);
         //cout << " " << selected[0] << endl;
-        if(selected.size()>46){
-            cv::line(dst, selected.at(0), selected.at(40), {255,0,0}, 2);
-            cv::line(dst, selected.at(5), selected.at(45), {255,0,0}, 2);
+
+
+        if(contours.size()>2){
+            if (abs((contours.at(0).at(0).height) - (contours.at(1).at(0).height)) < 10){
+                cv::line(dst, contours.at(0).at(0), contours.at(1).at(0), {255,0,0}, 1);
+                cv::line(dst, contours.at(0).at(2), contours.at(1).at(2), {255,0,0}, 1);
+            }
         }
-        imshow("wynik", dst);
+        imshow("wynik", dst);   
         imshow("detected", dilated);
         if (waitKey(1) == 27)
             break;
